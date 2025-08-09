@@ -1,0 +1,18 @@
+[serve]
+# The port to serve on.
+port = 8080
+# Open a browser tab once the initial build is complete.
+open = true		# changed from default
+# Disable auto-reload of the web app.
+no_autoreload = false
+
+[build]
+# The public URL from which assets are to be served.
+public_url = "./"
+# Build in release mode.
+release = true
+
+[watch]
+# Paths to watch. The `build.target`'s parent folder is watched by default.
+# Paths to ignore.
+ignore = []

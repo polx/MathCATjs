@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>MathCATjs</title></head>
+<body>
+<h1>MathCAT JS</h1>
+<p>MathML input:</p>
+<textarea id="mathmlInput" rows="10" cols="50"><math><mroot>
+    <mn>94949</mn>
+    <mn>3</mn>
+</mroot></math></textarea>
+<button id="speakaloud">speakaloud</button>
+<hr>
+<p>Speech:</p>
+<p id="speech"></p>
+<p>Rendering:</p>
+<div id="mathmlRendering">
+    <math><mroot>
+        <mn>94949</mn>
+        <mn>3</mn>
+    </mroot></math>
+</div>
+<script>
+  // =============== DEMO, please don't re-use as is =====================
+  window.mathmlInput = document.getElementById("mathmlInput")
+  window.mathmlRendering = document.getElementById("mathmlRendering")
+  window.speech = document.getElementById("speech")
+  window.mathCATinitted = false;
+
+  const speakIt = () => {
+    if(!mathCATinitted) {
+      const lang = document.body.parentElement.lang  || "en"
+      window.mathCAT = wasmBindings;
+      mathCAT.initMathCAT(lang); mathCATinitted = true;
+    }
+    mathmlRendering.innerHTML = mathmlInput.value
+    speech.innerText = mathCAT.mathmlToSpeech(mathmlInput.value)
+  }
+  const kick = () => {
+    if(mathCATinitted) return
+    console.log("kick")
+    if(!window.wasmBindings) setTimeout(kick, 10)
+    else speakIt()
+  }
+  window.addEventListener("load", kick)
+
+  document.getElementById("speakaloud").addEventListener("click", speakIt)
+  // ============= please re-use the below and inspire from above =============
+</script>
+</body>
+<!-- the built HTML file contains the references to the WASM, re-use this to
+        integrate MathCAT in your application. E.g. rename the `window.wasmBindings`
+        to `window.mathCAT` and/or write invoke the subsequent actions after the
+        await command which loads asynchronously.
+
+        Then call initMathCAT with an object expressing preferences
+        (e.g. {Language:"de", Verbosity:"Terse"}).
+
+        Now you can call mathmlToSpeech(mathMLexpression)
+</html>
