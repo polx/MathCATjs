@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head><title>MathCATjs</title></head>
 <body>
 <h1>MathCAT JS</h1>
@@ -19,41 +19,35 @@
         <mn>3</mn>
     </mroot></math>
 </div>
+<p>See source on <a href="https://github.com/polx/MathCATjs">GitHub</a>.</p>
 <script>
   // =============== DEMO, please don't re-use as is =====================
   window.mathmlInput = document.getElementById("mathmlInput")
   window.mathmlRendering = document.getElementById("mathmlRendering")
   window.speech = document.getElementById("speech")
-  window.mathCATinitted = false;
 
   const speakIt = () => {
-    if(!mathCATinitted) {
-      const lang = document.body.parentElement.lang  || "en"
-      window.mathCAT = wasmBindings;
-      mathCAT.initMathCAT(lang); mathCATinitted = true;
-    }
     mathmlRendering.innerHTML = mathmlInput.value
     speech.innerText = mathCAT.mathmlToSpeech(mathmlInput.value)
   }
-  const kick = () => {
-    if(mathCATinitted) return
-    console.log("kick")
-    if(!window.wasmBindings) setTimeout(kick, 10)
-    else speakIt()
-  }
-  window.addEventListener("load", kick)
 
   document.getElementById("speakaloud").addEventListener("click", speakIt)
+
+  window.addEventListener("TrunkApplicationStarted", (evt) => {
+    console.log("MathCAT started")
+    const lang = document.body.parentElement.lang  || "en"
+    window.mathCAT = wasmBindings
+    mathCAT.initMathCAT(lang)
+    speakIt()
+  })
   // ============= please re-use the below and inspire from above =============
 </script>
 </body>
 <!-- the built HTML file contains the references to the WASM, re-use this to
-        integrate MathCAT in your application. E.g. rename the `window.wasmBindings`
-        to `window.mathCAT` and/or write invoke the subsequent actions after the
-        await command which loads asynchronously.
+        integrate MathCAT in your application: e.g. listen to TrunkApplicationStarted
+        then define a global mathCAT object.
 
         Then call initMathCAT with an object expressing preferences
-        (e.g. {Language:"de", Verbosity:"Terse"}).
-
+        (e.g. {Language:"de", Verbosity:"Terse"} or just "en" or just nothing).
         Now you can call mathmlToSpeech(mathMLexpression)
 </html>
