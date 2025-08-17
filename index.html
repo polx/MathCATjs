@@ -19,25 +19,32 @@
         <mn>3</mn>
     </mroot></math>
 </div>
+<hr>
+<p><a id="link" href="#">link to this display</a></p>
 <p>See source on <a href="https://github.com/polx/MathCATjs">GitHub</a>.</p>
 <script>
   // =============== DEMO, please don't re-use as is =====================
   window.mathmlInput = document.getElementById("mathmlInput")
   window.mathmlRendering = document.getElementById("mathmlRendering")
   window.speech = document.getElementById("speech")
+  window.baseURL = location.href
+  if(baseURL.indexOf('?')>-1) baseURL = baseURL.substring(0, baseURL.indexOf('?'))
 
   const speakIt = () => {
     mathmlRendering.innerHTML = mathmlInput.value
     speech.innerText = mathCAT.mathmlToSpeech(mathmlInput.value)
+    document.getElementById("link").href = baseURL + "?lang=" + lang + "&mathml=" + encodeURIComponent(mathmlInput.value)
   }
 
   document.getElementById("speakaloud").addEventListener("click", speakIt)
 
   window.addEventListener("TrunkApplicationStarted", (evt) => {
     console.log("MathCAT started")
-    const lang = document.body.parentElement.lang  || "en"
+    const params = new URLSearchParams(location.search)
+    window.lang = params.get("lang") || document.body.parentElement.lang  || "en"
     window.mathCAT = wasmBindings
     mathCAT.initMathCAT(lang)
+    if(params.has("mathml"))  mathmlInput.value = params.get("mathml")
     speakIt()
   })
   // ============= please re-use the below and inspire from above =============

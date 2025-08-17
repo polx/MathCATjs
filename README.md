@@ -13,6 +13,7 @@ trunk serve
 
 ```
 trunk build
+node postbuild.mjs
 ```
 
 The built directory (`dist`) contains a `.wasm` and a `.js` file which are both needed
